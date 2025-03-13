@@ -13,7 +13,7 @@ A Model Context Protocol server that provides persistent project context managem
   - [Resources](#resources)
   - [Memory Bank Integration](#memory-bank-integration)
 - [File Structure](#file-structure)
-- [Using with Cline](#using-with-cline)
+- [System Propt for Cline](#system-prompt-suggestion)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
