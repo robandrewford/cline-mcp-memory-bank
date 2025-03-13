@@ -27,6 +27,43 @@ The Memory Bank MCP server helps maintain consistent project context across deve
 - Progress tracking and milestones
 - Technical decisions and rationale
 
+## Persistent Memory System
+
+One of the most powerful features of this project is its ability to maintain context across different coding sessions. Think of it as giving your AI assistant a "memory" that doesn't forget what you've been working on, even when you close VSCode and come back later.
+
+### How It Works
+
+Imagine you're working on a complex project that spans multiple days or weeks. Normally, each time you start a new coding session, you'd need to re-explain your project's context to the AI assistant. With the Memory Bank:
+
+- Your AI assistant remembers previous discussions and decisions
+- Maintains understanding of your project's architecture and goals
+- Keeps track of ongoing tasks and progress
+- Remembers your coding preferences and project conventions
+
+### Key Benefits
+
+1. **Continuity Across Sessions**
+   - No need to re-explain your project every time
+   - Pick up exactly where you left off
+   - Maintains consistent understanding of your codebase
+
+2. **Smart Context Management**
+   - Automatically tracks important technical decisions
+   - Records project progress and milestones
+   - Maintains documentation of your development journey
+
+3. **Enhanced Productivity**
+   - Faster project onboarding for each session
+   - More consistent and contextual AI assistance
+   - Reduces repetitive explanations
+
+4. **Project History**
+   - Keeps track of why certain decisions were made
+   - Maintains a log of completed features and changes
+   - Helps new team members understand project evolution
+
+The Memory Bank seamlessly integrates with the Cline VSCode Extension, requiring no additional setup from you once configured. It works quietly in the background, ensuring your AI assistant always has the context it needs to provide relevant and helpful assistance.
+
 ## Installation
 
 ### Prerequisites
