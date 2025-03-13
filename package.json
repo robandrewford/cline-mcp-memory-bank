@@ -1,0 +1,40 @@
+{
+  "name": "memory-bank-server",
+  "version": "0.1.0",
+  "description": "MCP server for persistent project context management",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "memory-bank-server": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "watch": "tsc -w",
+    "clean": "rm -rf build",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "project-management",
+    "context-management",
+    "ai-development",
+    "cline"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/memory-bank-server"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
