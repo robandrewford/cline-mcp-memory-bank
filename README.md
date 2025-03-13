@@ -201,6 +201,8 @@ project-root/
 
 ## Using with Cline
 
+Simply ask Cline to initialize the memory bank.  
+
 1. Initialize a new Memory Bank:
    ```
    use_mcp_tool('memory-bank', 'initialize_memory_bank', {
