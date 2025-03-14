@@ -100,7 +100,7 @@ Add the following to your Cline MCP settings (`~/.config/Code - Insiders/User/gl
     "memory-bank": {
       "command": "node",
       "args": [
-        "/path/to/memory-bank-server/build/index.js"
+        "/path/to/cline-memory-bank/build/index.js"
       ],
       "disabled": false,
       "autoApprove": []
@@ -109,11 +109,15 @@ Add the following to your Cline MCP settings (`~/.config/Code - Insiders/User/gl
 }
 ```
 
-Replace `/path/to/memory-bank-server` with the actual path to your server installation.
+Replace `/path/to/cline-memory-bank` with the actual path to your server installation.
 
 ## Features
 
 ### Tools
+
+Once installed simply ask cline to `initialize the memory bank`.
+
+Then simply ask cline to update the memory bank or use `.clinerules` file or the system prompt.
 
 1. `initialize_memory_bank`
    - Creates Memory Bank structure for a new project
@@ -192,7 +196,7 @@ Replace `/path/to/memory-bank-server` with the actual path to your server instal
 
 ### System Prompt Suggestion
 
-Add to Cline system prompt under settings.
+Add to Cline system prompt or `.clinerules` file under settings.
 
 ```
 Before proceeding with any task:
