@@ -100,8 +100,8 @@ The Memory Bank seamlessly integrates with the Cline VSCode Extension, requiring
 1. Clone and build the server:
 ```bash
 # Clone the repository
-git clone https://github.com/dazeb/cline-memory-bank
-cd cline-memory-bank
+git clone https://github.com/dazeb/cline-mcp-memory-bank
+cd cline-mcp-memory-bank
 
 # Install dependencies
 npm install
