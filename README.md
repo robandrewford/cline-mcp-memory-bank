@@ -27,6 +27,18 @@ The Memory Bank MCP server helps maintain consistent project context across deve
 - Progress tracking and milestones
 - Technical decisions and rationale
 
+```mermaid
+graph LR
+    VSCode[VS Code + Cline] --> MemBank[Memory Bank Server]
+    MemBank --> Files[Markdown Files]
+    Files --> Context[Project Context]
+    Files --> Progress[Progress Tracking]
+    Files --> Decisions[Decision Log]
+    AI[AI Assistant] --> Files
+    VSCode --> AI
+    AI --> MemBank
+```
+
 ## Persistent Memory System
 
 One of the most powerful features of this project is its ability to maintain context across different coding sessions. Think of it as giving your AI assistant a "memory" that doesn't forget what you've been working on, even when you close VSCode and come back later.
@@ -34,6 +46,17 @@ One of the most powerful features of this project is its ability to maintain con
 ### How It Works
 
 Imagine you're working on a complex project that spans multiple days or weeks. Normally, each time you start a new coding session, you'd need to re-explain your project's context to the AI assistant. With the Memory Bank:
+
+```mermaid
+graph LR
+    Session[New Session] --> Load[Load Context]
+    Load --> Read[Read Files]
+    Read --> Update[Update Context]
+    Update --> Write[Write Changes]
+    Write --> Track[Track Progress]
+    Track --> Record[Record Decisions]
+    Record --> Ready[Ready for Tasks]
+```
 
 - Your AI assistant remembers previous discussions and decisions
 - Maintains understanding of your project's architecture and goals
@@ -231,16 +254,62 @@ Key Rules:
 
 When initialized, the Memory Bank creates the following structure in your project:
 
-```
-project-root/
-└── memory-bank/
-    ├── projectContext.md    # Technical stack and guidelines
-    ├── activeContext.md     # Current session state
-    ├── progress.md         # Project progress tracking
-    └── decisionLog.md      # Technical decisions
+```mermaid
+graph LR
+    Root[Project Root] --> Bank[memory-bank]
+    Bank --> PC[projectContext.md]
+    Bank --> AC[activeContext.md]
+    Bank --> P[progress.md]
+    Bank --> DL[decisionLog.md]
+    PC --> Stack[Technical Stack]
+    AC --> Tasks[Active Tasks]
+    P --> Status[Project Status]
+    DL --> History[Decision History]
 ```
 
+### Initial File Contents
+
+Upon initialization, each file is populated with structured content:
+
+1. `activeContext.md`:
+   - Current session information with timestamp
+   - Initial tasks (Project initialization, Environment setup)
+   - Open questions about project goals and requirements
+   - Recent updates section
+
+2. `progress.md`:
+   - Current phase (Initialization)
+   - Initial completed tasks (Repository setup, Basic structure)
+   - In-progress tasks (Environment configuration, Documentation)
+   - Upcoming tasks section
+   - Blockers tracking
+
+3. `decisionLog.md`:
+   - Initial project structure decisions
+   - Development workflow choices with alternatives
+   - Documentation strategy decisions
+   - Section for pending decisions
+
+4. `projectContext.md`:
+   - Project overview and version
+   - Detected technical stack and dependencies
+   - Configuration files listing
+   - Architecture principles
+   - Development setup instructions
+   - Project workflow guidelines
+
 ## Using with Cline
+
+```mermaid
+graph LR
+    Start[Start] --> Init[Initialize]
+    Init --> Context[Load Context]
+    Context --> Update[Make Changes]
+    Update --> Progress[Track Progress]
+    Progress --> Record[Record Decisions]
+    Record --> Sync[Auto Sync]
+    Sync --> Context
+```
 
 Simply ask Cline to initialize the memory bank.  
 
