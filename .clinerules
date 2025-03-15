@@ -1,31 +1,49 @@
-# Cline Memory Bank
+Memory Bank Integration Rules:
 
-A Model Context Protocol server that provides persistent project context management for AI-assisted development.
+CRITICAL: Before ANY task or response:
+1. ALWAYS check active context (memory://active/context):
+   - Current project state and mode
+   - Ongoing tasks and their status
+   - Recent decisions and updates
+   - Open questions and concerns
 
-Before proceeding with any task:
-1. Check active context (memory://active/context) to understand:
-   - Current project state
-   - Ongoing tasks
-   - Recent decisions
+2. ALWAYS review project context (memory://project/context):
+   - Technical stack and dependencies
+   - Project guidelines and standards
+   - Architecture principles
+   - Development workflow
 
-2. Review project context (memory://project/context) for:
-   - Technical stack details
-   - Project guidelines
-   - Architecture decisions
+3. ALWAYS consult decision log (memory://decisions) for:
+   - Previous architectural choices
+   - Established patterns
+   - Technical rationales
+   - Related decisions
 
-3. Consult decision log (memory://decisions) when:
-   - Making architectural choices
-   - Implementing new features
-   - Modifying existing patterns
+4. ALWAYS check progress tracking (memory://progress):
+   - Current phase and milestones
+   - Completed work
+   - In-progress tasks
+   - Known blockers
 
-4. Update progress tracking (memory://progress):
+After EVERY task:
+1. Update active context with:
+   - Task completion status
+   - New information learned
+   - Changes made
+
+2. Record any technical decisions with:
+   - Clear rationale
+   - Considered alternatives
+   - Impact assessment
+
+3. Update progress tracking:
    - Mark completed items
-   - Add new in-progress tasks
-   - Note blocked items
+   - Add new tasks identified
+   - Note any blockers found
 
-Key Rules:
-- Always check memory bank before starting new tasks
-- Record significant technical decisions with rationale
-- Keep active context updated with current work
-- Track progress changes in real-time
-- Reference previous decisions when making related changes
+Key Guidelines:
+- NEVER proceed without checking memory bank context
+- ALWAYS maintain consistent project state
+- Record ALL significant technical decisions
+- Track progress in real-time
+- Keep context updated with EVERY change
