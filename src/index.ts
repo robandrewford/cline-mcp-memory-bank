@@ -55,10 +55,27 @@ interface SessionState {
   };
 }
 
+interface McpSettings {
+  mcpServers: {
+    [key: string]: {
+      command: string;
+      args: string[];
+      env?: { [key: string]: string };
+      disabled?: boolean;
+      autoApprove?: string[];
+    };
+  };
+}
+
 class MemoryBankServer {
   private sessionState: SessionState;
   private server: Server;
   private memoryBankPath: string;
+  private static readonly MCP_SETTINGS_PATHS = {
+    linux: '.config/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json',
+    darwin: 'Library/Application Support/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json',
+    win32: 'AppData/Roaming/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json'
+  };
 
   constructor() {
     this.sessionState = {
@@ -341,30 +358,91 @@ class MemoryBankServer {
       configs: []
     };
 
+    // Define valid programming language extensions
+    const validLanguages = new Map([
+      ['js', 'JavaScript'],
+      ['mjs', 'JavaScript'],
+      ['jsx', 'JavaScript (React)'],
+      ['ts', 'TypeScript'],
+      ['tsx', 'TypeScript (React)'],
+      ['py', 'Python'],
+      ['rb', 'Ruby'],
+      ['php', 'PHP'],
+      ['java', 'Java'],
+      ['go', 'Go'],
+      ['rs', 'Rust'],
+      ['c', 'C'],
+      ['cpp', 'C++'],
+      ['h', 'C/C++ Header'],
+      ['cs', 'C#'],
+      ['swift', 'Swift'],
+      ['kt', 'Kotlin'],
+      ['dart', 'Dart']
+    ]);
+
+    // Define relevant config files
+    const relevantConfigs = new Set([
+      'package.json',
+      'tsconfig.json',
+      '.eslintrc',
+      '.prettierrc',
+      '.babelrc',
+      '.env',
+      'webpack.config.js',
+      'vite.config.js',
+      'next.config.js',
+      '.gitignore',
+      'jest.config.js',
+      'rollup.config.js'
+    ]);
+
     try {
       const files = await fs.readdir(projectPath, { recursive: true });
       
-      // Detect languages and configs
+      // Process each file
       files.forEach((file: string) => {
-        const ext = path.extname(file).toLowerCase();
-        if (ext) stack.languages.add(ext.substring(1));
-        
+        const ext = path.extname(file).toLowerCase().substring(1);
         const basename = path.basename(file);
-        if (basename.includes('config') || basename.startsWith('.')) {
+        
+        // Add valid programming languages
+        if (validLanguages.has(ext)) {
+          stack.languages.add(validLanguages.get(ext)!);
+        }
+        
+        // Add relevant config files
+        if (relevantConfigs.has(basename)) {
           stack.configs.push(basename);
         }
       });
+
+      // Remove duplicates from configs
+      stack.configs = [...new Set(stack.configs)];
 
       // Detect frameworks from package.json
       const packageJson = await fs.readFile(path.join(projectPath, 'package.json'), 'utf8');
       const { dependencies = {}, devDependencies = {} } = JSON.parse(packageJson);
       
       const allDeps = { ...dependencies, ...devDependencies };
-      if (allDeps['react']) stack.frameworks.push('React');
-      if (allDeps['next']) stack.frameworks.push('Next.js');
-      if (allDeps['express']) stack.frameworks.push('Express');
-      if (allDeps['vue']) stack.frameworks.push('Vue.js');
-      if (allDeps['angular']) stack.frameworks.push('Angular');
+      const frameworkDetection = {
+        'react': 'React',
+        'next': 'Next.js',
+        'express': 'Express',
+        'vue': 'Vue.js',
+        'angular': 'Angular',
+        'svelte': 'Svelte',
+        'nestjs': 'NestJS',
+        '@nestjs/core': 'NestJS',
+        'fastify': 'Fastify',
+        'koa': 'Koa',
+        'gatsby': 'Gatsby',
+        'nuxt': 'Nuxt.js'
+      };
+
+      for (const [dep, framework] of Object.entries(frameworkDetection)) {
+        if (allDeps[dep]) {
+          stack.frameworks.push(framework);
+        }
+      }
 
       return stack;
     } catch (error) {
@@ -420,57 +498,54 @@ ${d.relatedDecisions ? `Related Decisions:\n${d.relatedDecisions.map(rd => `- ${
   }
 
   private formatProjectContext(info: ProjectInfo, stack: TechStack): string {
+    // Filter out core dependencies
+    const corePackages = new Set(['@types/node', 'typescript', 'ts-node', 'nodemon']);
+    const keyDeps = info.dependencies.filter(d => !corePackages.has(d));
+    const keyDevDeps = info.devDependencies.filter(d => !corePackages.has(d));
+
+    const formatDeps = (deps: string[]) => 
+      deps.length ? deps.map(d => `- ${d}`).join('\n') : 'None';
+
     return `# Project Context
 
 ## Overview
 ${info.name} - ${info.description}
-- Version: ${info.version}
-- License: ${info.license}
+Version: ${info.version}
+License: ${info.license}
 
 ## Technical Stack
-- Runtime: ${stack.runtime}
-${stack.frameworks.length ? `- Frameworks:\n${stack.frameworks.map(f => `  - ${f}`).join('\n')}` : ''}
-- Languages: ${Array.from(stack.languages).join(', ')}
-- Key Dependencies:
-${info.dependencies.map(d => `  - ${d}`).join('\n')}
+Runtime: ${stack.runtime}
+${stack.languages.size ? `Languages: ${Array.from(stack.languages).sort().join(', ')}` : ''}
+${stack.frameworks.length ? `Frameworks: ${stack.frameworks.join(', ')}` : ''}
 
-## Development Dependencies
-${info.devDependencies.map(d => `- ${d}`).join('\n')}
+## Dependencies
+Core:
+${formatDeps(keyDeps)}
 
-## Configuration Files
-${stack.configs.map(c => `- ${c}`).join('\n')}
+Development:
+${formatDeps(keyDevDeps)}
 
-## Architecture Principles
-- Project follows modular architecture
-- Separation of concerns
-- DRY (Don't Repeat Yourself)
-- SOLID principles
+## Configuration
+${stack.configs.sort().map(c => `- ${c}`).join('\n')}
 
-## Development Setup
-### Prerequisites
-- Node.js
-- npm or yarn
-- Required global dependencies
-
-### Build Process
-1. Install dependencies
-2. Configure environment
-3. Build project
-4. Run tests
-
-### Development Workflow
-1. Branch from main
-2. Implement changes
-3. Write tests
-4. Submit PR
+## Architecture
+- Type: ${stack.frameworks.length ? `Framework-based (${stack.frameworks.join(', ')})` : 'Modular'}
+- Language: ${Array.from(stack.languages)[0] || 'Not detected'}
+- Environment: Node.js
+${info.dependencies.includes('@modelcontextprotocol/sdk') ? '- MCP Server Implementation' : ''}
 `;
   }
 
-  private async handleInitializeMemoryBank(args: any) {
+  public async handleInitializeMemoryBank(args: any) {
     const projectPath = args.projectPath;
     if (!projectPath) {
       throw new McpError(ErrorCode.InvalidParams, 'Project path is required');
     }
+
+    // Convert to absolute path if not already
+    const absoluteProjectPath = path.isAbsolute(projectPath) 
+      ? projectPath 
+      : path.resolve(process.cwd(), projectPath);
 
     try {
       const memoryBankPath = path.join(projectPath, this.memoryBankPath);
@@ -571,11 +646,14 @@ Initialization
         );
       }
 
+      // Update MCP settings
+      await this.updateMcpSettings(absoluteProjectPath);
+
       return {
         content: [
           {
             type: 'text',
-            text: 'Memory Bank initialized successfully',
+            text: 'Memory Bank initialized successfully and MCP settings configured',
           },
         ],
       };
@@ -678,6 +756,66 @@ Initialization
         `Failed to update progress: ${error instanceof Error ? error.message : String(error)}`
       );
     }
+  }
+
+  private async updateMcpSettings(projectPath: string): Promise<void> {
+    try {
+      const settingsPath = await this.getMcpSettingsPath();
+      const settings = await this.readMcpSettings(settingsPath);
+      
+      // Update memory-bank server configuration
+      settings.mcpServers = settings.mcpServers || {};
+      settings.mcpServers['memory-bank'] = {
+        command: 'node',
+        args: [path.join(projectPath, 'build', 'index.js')],
+        env: {
+          PROJECT_PATH: projectPath
+        },
+        disabled: false,
+        autoApprove: []
+      };
+
+      await this.writeMcpSettings(settingsPath, settings);
+    } catch (error: unknown) {
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Failed to update MCP settings: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
+  private async getMcpSettingsPath(): Promise<string> {
+    const homedir = process.env.HOME || process.env.USERPROFILE;
+    if (!homedir) {
+      throw new Error('Could not determine user home directory');
+    }
+
+    const platform = process.platform as keyof typeof MemoryBankServer.MCP_SETTINGS_PATHS;
+    const relativePath = MemoryBankServer.MCP_SETTINGS_PATHS[platform];
+    if (!relativePath) {
+      throw new Error(`Unsupported platform: ${platform}`);
+    }
+
+    return path.join(homedir, relativePath);
+  }
+
+  private async readMcpSettings(settingsPath: string): Promise<McpSettings> {
+    try {
+      const content = await fs.readFile(settingsPath, 'utf8');
+      return JSON.parse(content);
+    } catch (error) {
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+        // Return default settings if file doesn't exist
+        return { mcpServers: {} };
+      }
+      throw error;
+    }
+  }
+
+  private async writeMcpSettings(settingsPath: string, settings: McpSettings): Promise<void> {
+    // Ensure settings directory exists
+    await fs.mkdir(path.dirname(settingsPath), { recursive: true });
+    await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
   }
 
   private async readMemoryBankFile(projectPath: string, fileName: string): Promise<string> {
@@ -800,5 +938,28 @@ ${decision.rationale}${alternatives}${related}`;
   }
 }
 
-const server = new MemoryBankServer();
-server.run().catch(console.error);
+async function handleCliCommand() {
+  if (process.argv[2] === 'initialize_memory_bank') {
+    const projectPath = process.argv[3];
+    if (!projectPath) {
+      console.error('Error: Project path is required');
+      process.exit(1);
+    }
+
+    const server = new MemoryBankServer();
+    try {
+      const result = await server.handleInitializeMemoryBank({ projectPath });
+      console.log(result.content[0].text);
+      process.exit(0);
+    } catch (error) {
+      console.error('Error:', error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    }
+  } else {
+    // Run as MCP server
+    const server = new MemoryBankServer();
+    server.run().catch(console.error);
+  }
+}
+
+handleCliCommand();
