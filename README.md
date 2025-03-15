@@ -1,6 +1,6 @@
 # Cline Memory Bank
 
-A Model Context Protocol server that provides persistent project context management for AI-assisted development.
+A Model Context Protocol server that provides persistent project context management for AI-assisted development - specifically designed to work with [Cline VSCode Extenson](https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev).
 
 ## Table of Contents
 
