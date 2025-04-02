@@ -10,6 +10,7 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import fs from 'fs/promises';
+import os from 'os';
 import path from 'path';
 
 interface MemoryBankFile {
@@ -107,7 +108,13 @@ class MemoryBankServer {
     this.setupResourceHandlers();
 
     // Error handling
-    this.server.onerror = (error) => console.error('[MCP Error]', error);
+    this.server.onerror = (error: unknown) => {
+      if (error instanceof Error) {
+        console.error('[MCP Error]', error.message, error.stack);
+      } else {
+        console.error('[MCP Error]', error);
+      }
+    };
     process.on('SIGINT', async () => {
       await this.server.close();
       process.exit(0);
@@ -785,9 +792,12 @@ Initialization
   }
 
   private async getMcpSettingsPath(): Promise<string> {
-    const homedir = process.env.HOME || process.env.USERPROFILE;
-    if (!homedir) {
-      throw new Error('Could not determine user home directory');
+    let homedir: string;
+    try {
+      homedir = os.homedir();
+    } catch (error) {
+      console.error('Error getting home directory:', error);
+      throw new Error(`Could not determine user home directory: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     const platform = process.platform as keyof typeof MemoryBankServer.MCP_SETTINGS_PATHS;
