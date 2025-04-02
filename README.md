@@ -1,5 +1,7 @@
 # Cline Memory Bank 
 
+Inspired by [roo-code-memory-bank](https://github.com/GreatScottyMac/roo-code-memory-bank)
+
 This project is **still in development** but is mostly working.
 
 A Model Context Protocol server that provides persistent project context management for AI-assisted development - specifically designed to work with [Cline VSCode Extenson](https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev).
