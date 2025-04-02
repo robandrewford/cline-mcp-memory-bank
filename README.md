@@ -107,19 +107,29 @@ The Memory Bank seamlessly integrates with the Cline VSCode Extension, requiring
 git clone https://github.com/dazeb/cline-mcp-memory-bank
 cd cline-mcp-memory-bank
 
-# Install dependencies
-npm install
+# Install dependencies (using pnpm as recommended)
+pnpm install
 
 # Build the server
-npm run build
+pnpm run build
 
-# Make globally available (optional)
-npm link
+# Make globally available (optional, requires pnpm setup for global linking)
+# pnpm link --global 
 ```
 
-2. Configure Cline Extension:
+2. Configure Cline Extension (Recommended: Use Initialization Command):
 
-Add the following to your Cline MCP settings (`~/.config/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`):
+   **Recommended Method:** After building, run the initialization command from the project root. This automatically creates the memory bank files and configures the Cline MCP settings for you:
+   ```bash
+   node build/index.js initialize_memory_bank . 
+   ```
+
+   **Manual Method (If needed):** Add the following to your Cline MCP settings file. The path varies by OS:
+   - **Linux:** `~/.config/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+   - **macOS:** `~/Library/Application Support/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+   - **Windows:** `%APPDATA%\Code - Insiders\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json`
+
+   Add this JSON object:
 
 ```json
 {
@@ -136,15 +146,21 @@ Add the following to your Cline MCP settings (`~/.config/Code - Insiders/User/gl
 }
 ```
 
-Replace `/path/to/cline-memory-bank` with the actual path to your server installation.
+Replace `/path/to/cline-memory-bank` with the actual, absolute path to your server installation (e.g., `C:\Users\YourUser\Projects\cline-mcp-memory-bank` on Windows). **Note:** Using the initialization command above handles this automatically.
 
 ## Features
 
 ### Tools
 
-Once installed simply ask cline to `initialize the memory bank`.
+After installation and building, initialize the memory bank for your project by running this command in the project's root directory:
+```bash
+node /path/to/cline-mcp-memory-bank/build/index.js initialize_memory_bank .
+```
+(Replace `/path/to/cline-mcp-memory-bank` with the actual path where you cloned and built the server).
 
-Then simply ask cline to update the memory bank or use `.clinerules` file or the system prompt.
+Alternatively, if the server is configured in Cline, you can ask Cline to run the tool: `initialize the memory bank`.
+
+Once initialized, you can ask Cline to update the memory bank context, record decisions, or track progress using the tools below, or configure it via `.clinerules` or the system prompt.
 
 1. `initialize_memory_bank`
    - Creates Memory Bank structure for a new project
